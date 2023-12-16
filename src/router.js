@@ -1,0 +1,11 @@
+const express = require('express');
+
+const createGuestRoute = require('./routes/createGuestRoute');
+const readGuestsRoute = require('./routes/readGuestsRoute');
+
+const router = express.Router();
+
+router.post('/guest', createGuestRoute);
+router.get('/guests', readGuestsRoute);
+
+module.exports = router;
