@@ -16,7 +16,7 @@ app.use(morgan('tiny'));
 
 app.use(router);
 
-const PORT = process.env.PORT || 5007;
+const PORT = process.env.PORT;
 
 app.set('port', PORT);
 

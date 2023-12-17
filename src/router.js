@@ -7,5 +7,6 @@ const router = express.Router();
 
 router.post('/guest', createGuestRoute);
 router.get('/guests', readGuestsRoute);
+router.get('/', emptyRoute);
 
 module.exports = router;
