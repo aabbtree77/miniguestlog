@@ -2,6 +2,7 @@ const express = require('express');
 
 const createGuestRoute = require('./routes/createGuestRoute');
 const readGuestsRoute = require('./routes/readGuestsRoute');
+const emptyRoute = require('./routes/emptyRoute');
 
 const router = express.Router();
 
