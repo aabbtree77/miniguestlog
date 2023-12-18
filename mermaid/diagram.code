@@ -1,0 +1,60 @@
+%%{init:{
+  "theme": "dark",
+    "themeVariables": {
+    "nodeBorder" : "blue",
+    "mainBkg" : "blue",
+    "nodeTextColor" : "black",
+    "fontFamily": "arial",
+    "fontSize": "32px"
+    }
+}}%%
+
+flowchart TD
+    subgraph github.com/aabbtree77/aabbtree77.github.io
+    subgraph subgraph_padding1 [ ]
+    A[index.html] 
+    D[miniguestlog/loadGuestsSpinner.html</p>]
+    K[miniguestlog/sendGuestTimeLoc.js]
+    end
+    end
+
+    subgraph ServerCode["github.com/aabbtree77/miniguestlog"]
+    subgraph subgraph_padding2 [ ]
+    H[src/routes/createGuestroute.js]
+    J[src/routes/readGuestsroute.js]   
+    end
+    end 
+
+    subgraph R[render.com]
+    subgraph subgraph_padding3 [ ]
+    R1[IPs]
+    R2[.env]   
+    end
+    end 
+
+    C((mongodb.com))
+    I[ipify.org]
+    
+    H --> |store visit time and loc|C
+    J --> |retrieve json list of all visits|D
+    C --> |retrieve visit time and loc|J
+    E(You) --> |Visit| A 
+    A -->  |'DOMContentLoaded' triggered| K
+    F(Me, testing locations) --> G("TunnelBear VPN") 
+    G --> |Visit|A
+    I --> |get IP|K
+    K--> |send visit time and IP| H
+    A -->|Click on 'Guests'|D
+
+    ServerCode <--> R
+    R --> |whitelist IPs|C
+    
+classDef className fill:gray,stroke:blue,stroke-width:4px,color:blue;
+class C,R,I,G className;
+
+linkStyle default stroke: white;
+
+classDef subgraph_padding fill:none,stroke:none;
+
+
+class subgraph_padding1,subgraph_padding2,subgraph_padding3,subgraph_padding4,subgraph_padding5,subgraph_padding6,subgraph_padding7,subgraph_padding8 subgraph_padding;    
