@@ -15,7 +15,7 @@
 
 This MERN app shows the visitors of my homepage at aabbtree77.github.io. To see the list, one must click on the link "Guests" there. There is no "R" in this application, only plain Js. This code is hosted on render.com (with a free plan) and uses a free mongodb.com account to store data. The frontend code is at https://github.com/aabbtree77/aabbtree77.github.io. 
 
-There is nothing safeguarded here as it is hard with raw MERN, but I do not store any sensible information anyway. Only a visitor's time and city is logged. An attacker could easily flood the server endpoint, but I share this code just in case someone would want to build a minimal personal guest log. Do not follow this path to make things run on any paid serverless platforms that price every request and every bit of memory.
+There is nothing safeguarded here as it is hard with raw MERN, but I do not store any sensible information anyway. Only a visitor's time and city is logged. An attacker could easily flood the server and the github frontend, but I share this code just in case someone would want to build a minimal personal guest log. Do not follow this path to make things run on any paid serverless platforms that price every request and every bit of memory.
 
 Tracking can be accomplished with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) much quicker and reliably. However, GA stores sensitive data and is banned in many European countries such as France, Finland, Sweden... It is not banned in Lithuania though. The GA interface is bureaucratic and takes time digging, while with this code one can monitor only what is needed in any place without a VPN.
 
@@ -40,6 +40,14 @@ During the development, I learned from reddit that Postman API could be in the p
 It is amazing how quickly one can get a fully deployed web app with an HTTPS address when using render.com, but there is a caveat. The cloud shuts down the nodes with the free plan after 15 minutes of any request inactivity: [1](https://community.render.com/t/cold-boot-start-of-the-server-for-first-request/15911), [2](https://docs.render.com/docs/free). Later on, the first request will take the whole minute or two to process (!), the things run smoothly again, until the next inactivity. **This is definitely not going to be a good user experience.** Concerning this web app, I am still content with render.com as it saves a lot of time. I can wait for my personal list of guests to load, but there is no way for the free plan to work in any mission critical scenario.
 
 Deployment is a big factor in the choice of a technology stack.
+
+## geoip-lite
+
+It is not reliable with the city detection. It confuses Vilnius with Kaunas in Lithuania. Sometimes the returned city is an empty string. I am not sure about the limitations of the IP-based geolocation, but it is worth trying some other services.
+
+## Conclusions
+
+This mini web app runs for about a month continuously (January 2024). It did not take much time to deploy the code. On the other hand, a lot of control is totally lost with the third party services. I do not understand how MongoDB and HTTP requests reach Js on the server side. I also have doubts about MERN as a tool to build web apps as I certainly do not want to code authentication and user administration from scratch.
 
 ## References
 
