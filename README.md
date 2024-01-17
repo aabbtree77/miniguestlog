@@ -15,17 +15,17 @@
 
 This MERN app shows the visitors of my homepage at aabbtree77.github.io. To see the list, one must click on the link "Guests" there. There is no "R" in this application, only plain Js. This code is hosted on render.com (with a free plan) and uses a free mongodb.com account to store data. The frontend code is at https://github.com/aabbtree77/aabbtree77.github.io. 
 
-There is nothing safeguarded here as it is hard with raw MERN, but I do not store any sensible information anyway. Only a visitor's time and city is logged. An attacker could easily flood the server and the github frontend, but I share this code just in case someone would want to build a minimal personal guest log. Do not follow this path to make things run on any paid serverless platforms that price every request and every bit of memory.
+There is nothing safeguarded here, but I do not store any sensible information anyway.
 
-Tracking can be accomplished with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) much quicker and reliably. However, GA stores sensitive data and is banned in many European countries such as France, Finland, Sweden... It is not banned in Lithuania though. The GA interface is bureaucratic and takes time digging, while with this code one can monitor only what is needed in any place without a VPN.
+Tracking can be accomplished with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) without coding. However, GA is banned in many European countries such as France, Finland, Sweden... It is not banned in Lithuania though. The GA interface is bureaucratic and takes time digging, while with this code I monitor only what is needed in any place without a VPN.
 
-The TunnelBear VPN helps to vary the client IP/location and see if the code reports correct country codes. I use ipify.org with the geoip-lite npm library to detect and convert the IP to the city and country names. It is unclear if the geoip-lite database will be updated on render.com, and how often. One could find some free 3rd party services that detect and convert the IP to location more directly.
+The TunnelBear VPN helps to vary the client IP/location and see if the code reports correct country codes. I use ipify.org with the geoip-lite npm library to detect and convert the IP to the city and country names.
 
-All the tools that I have listed in this section are totally free, for now (December 2023).
+All the tools that I have listed in this section are totally free, for now (January 2024).
 
 ## MERN
 
-MERN feels a bit low level, but there are a lot of tutorials and hosting is easy thanks to render.com. [Next.js with Supabase](https://www.youtube.com/watch?v=zut46AB8DHQ&t=227s) could be more productive for real business apps with authentication and data relations. 
+MERN lacks a built-in authentication and user administration and "M" is questionable. Hosting is easy thanks to render.com. [Next.js with Supabase](https://www.youtube.com/watch?v=zut46AB8DHQ&t=227s) or PocketBase could be more productive, I am going to test these next.
 
 The client side Js gave me one small headache with an "async double fetch" which had to be nested. 
 
@@ -37,17 +37,62 @@ During the development, I learned from reddit that Postman API could be in the p
 
 ## render.com
 
-It is amazing how quickly one can get a fully deployed web app with an HTTPS address when using render.com, but there is a caveat. The cloud shuts down the nodes with the free plan after 15 minutes of any request inactivity: [1](https://community.render.com/t/cold-boot-start-of-the-server-for-first-request/15911), [2](https://docs.render.com/docs/free). Later on, the first request will take the whole minute or two to process (!), the things run smoothly again, until the next inactivity. **This is definitely not going to be a good user experience.** Concerning this web app, I am still content with render.com as it saves a lot of time. I can wait for my personal list of guests to load, but there is no way for the free plan to work in any mission critical scenario.
-
-Deployment is a big factor in the choice of a technology stack.
+The cloud shuts down the nodes with the free plan after 15 minutes of any request inactivity: [1](https://community.render.com/t/cold-boot-start-of-the-server-for-first-request/15911), [2](https://docs.render.com/docs/free). Later on, the first request will take the whole minute or two to process (!), the things run smoothly again, until the next inactivity. **This is definitely not going to be a good user experience.** Concerning this web app specifically, I can wait for my personal list of guests to load, but there is no way for the free plan to work without some kind of a constant pinging.
 
 ## geoip-lite
 
-It is not reliable with the city detection. It confuses Vilnius with Kaunas in Lithuania. Sometimes the returned city is an empty string. I am not sure about the limitations of the IP-based geolocation, but it is worth trying some other services.
+It is not reliable with the city detection. It confuses Vilnius with Kaunas in Lithuania. Sometimes the returned city is an empty string. It is unclear if the geoip-lite database will be updated on render.com, and how often. This part needs to be totally rewritten.
+
+## MongoDb Atlas
+
+The interfaces are somewhat inconsistent and error-prone. There are a lot of ways to manage the database. I have used: (i) Their main online GUI in my desktop browser, and (ii) the tool called MongoDB Compass which I have installed on Ubuntu 22.04.   
+
+The online GUI occasionally is disfunctional with 
+
+```
+"Request invalid. Please visit your Clusters and try again."
+```
+
+after clicking on Database -> Cluster0 -> Collections, despite the IP being whitelisted. Googling does not help much here.
+
+MongoDB Compass solves this problem, but it is an extra desktop app with its own GUI and shell.
+
+Deleting multiple entries (documents) is cumbersome. The option does not seem to exist in the online GUI! In MongoDB Compass, one needs to get into MONGOSH shell, and then execute the commands such as
+
+```
+> db.guests.deleteMany({city:"Kaunas"})
+
+> {
+   acknowledged: true,
+   deletedCount: 19
+  }
+```
+
+The shell does not support any mouse actions, but ctrl+c works fine. 
+
+One has to be extra-careful with connection URIs. Database -> Connect gives a generic URI, but one needs to append it with a specific database (collection) name set up during the creation, which may not be visible at all due to the retrieval error indicated above. Typing this in MongoDB Compass (with a proper username and password)
+
+```
+mongodb+srv://<username>:<password>@cluster0.0vbktln.mongodb.net/
+```
+
+does not display any errors, it connects and displays the collections, but MONGOSH would not work. I had to explicitly reconnect with the collection name "guests" appended
+
+```
+mongodb+srv://<username>:<password>@cluster0.0vbktln.mongodb.net/guests
+```
+
+for MONGOSH to work. When it does not work, it just does not list items in the shell, there are no error messages. 
+
+Therefore, one has to be careful and note the collection names upon the creation, look into .env files in the server side code.
+
+In short, one gets the job done, but with the usual minor annoyances just like in anything 3rd party related with multiple ways of doing the same thing, going schizoidal between GUI, "shell", browser and desktop app, in-code automation. I would probably stick to the node.js API and write Js scripts to manage the database, if I were to spend more time with MongoDB Atlas. 
+
+Oddly, there do not seem to be that many MongoDB Atlas users, judging from googling for errors and SO searches.
 
 ## Conclusions
 
-This mini web app runs for about a month continuously (January 2024). It did not take much time to deploy the code. On the other hand, a lot of control is totally lost with the third party services. I do not understand how MongoDB and HTTP requests reach Js on the server side. I also have doubts about MERN as a tool to build web apps as I certainly do not want to code authentication and user administration from scratch.
+This mini web app runs for about a month continuously (January 2024). It did not take much time to deploy the code. On the other hand, a lot of control is totally lost with the third party services. I do not understand how MongoDB and HTTP requests reach Js on the server side. I also have doubts about MERN as a tool to build web apps as I do not want to code authentication and user administration from scratch.
 
 ## References
 
