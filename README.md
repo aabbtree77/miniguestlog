@@ -19,7 +19,7 @@ Tracking can be accomplished with [Google Analytics](https://en.wikipedia.org/wi
 
 ## MERN
 
-MERN lacks a built-in authentication and user administration, but youtube has tutorials how to implement that, while newer BaaS services may not have that, and they are their own can of worms. I looked briefly into Supabase and PocketBase and discarded them. A self-hosted Payload CMS could be interesting, to cut time with user management, or not. [NoSQL](https://youtu.be/cC6HFd1zcbo?t=1047) makes sense to me (I do not know any SQL), but I may change the opinion later. Hosting is easy thanks to render.com.
+MERN is ideal for this kind of a simple CRUD app. A single language (Js) on the server and client, communication with JSON, no choice-induced paralysis.
 
 The client side Js gave me one small headache with an "async double fetch" which had to be nested. 
 
@@ -39,7 +39,7 @@ It is not reliable with the city detection. It confuses Vilnius with Kaunas in L
 
 ## MongoDB Atlas
 
-There are a lot of ways to set up and manage the database. I have used: (i) The cloud service with the online GUI in my desktop browser, and (ii) the tool called MongoDB Compass which I have installed on Ubuntu 22.04.   
+There are a lot of ways to set up and manage the database. I have used two: (i) The ATLAS cloud with the online GUI in my desktop browser, and (ii) the tool called MongoDB Compass which I have installed on Ubuntu 22.04.   
 
 The online GUI occasionally is disfunctional with 
 
@@ -49,9 +49,9 @@ The online GUI occasionally is disfunctional with
 
 after clicking on Database -> Cluster0 -> Collections, despite the IP being whitelisted. Googling does not help much, but the error does not happen often.
 
-MongoDB Compass solves this problem, but it is an extra desktop app with its own GUI and shell.
+MongoDB Compass solves this problem, but it is an extra desktop app with its own GUI and shell. It works well though.
 
-Deleting multiple entries (documents) is cumbersome. The option does not seem to exist in the online GUI. In MongoDB Compass, one needs to get into MONGOSH shell, and then execute the commands such as
+Deleting multiple entries (documents) is not possible in the online GUI. In MongoDB Compass, one needs to get into MONGOSH shell, and then execute the commands such as
 
 ```
 > db.guests.deleteMany({city:"Kaunas"})
@@ -76,37 +76,25 @@ does not display any errors, it connects and displays the collections, but MONGO
 mongodb+srv://<username>:<password>@cluster0.0vbktln.mongodb.net/guests
 ```
 
-for MONGOSH to work. When it does not work, it just does not list items in the shell, there are no error messages. 
+for MONGOSH to work. 
 
 Note the collection names, look into .env files in the server side code.
-
-To delete all the documents which include the city "Kaunas":
-
-```
-> db.guests.deleteMany({city: "Kaunas" })
-< {
-  acknowledged: true,
-  deletedCount: 173
-}
-```
 
 ## Security
 
 I have limited my MongoDB collection to 10MB and 200 documents (the free MongoDB Atlas plan provides a lot more, 512MB storage). This is a capped collection, the newest document overwrites the oldest one, so an attacker can only flood the server API, but it won't crash the server. The frontend is set to retrieve only 50 latest items, all at once, so it should not hang the browser. Typically, it will be less than 250KB of data to download. The log is visible to everyone as there is no sensitive data.
 
-## Conclusions
-
-This mini web app runs for about a month continuously (January 2024). It does not take much time to modify and deploy the code on render.com, but the free plan with cold starts is mildly annoying. It solves the problem though, I can log my visitors. 
-
-It is not clear if MERN is the way. It feels too low level, NoSQL is questionable, Express is not hyped as much as Next.js, Remix, SvelteKit... 
-
-On the other hand, Next.js is changing a lot with each major version release, problems with the default opt-out caching, and it looks like one still needs [Express](https://www.youtube.com/watch?v=06g6YJ6JCJU) with Next.js. 
-
-Automated user sign-up and user authentication? BaaS (Supabase, PocketBase, Auth0, Clerk): I do not like any of these. Still need to study how this is done with MERN and Next.js, will report back here when it becomes clear which option is better.
-
 ## Mermaid
 
-Mermaid diagrams are only good for tiny simple diagrams, but I would no longer use them for anything, TBH. For anything bigger (see my diagram above), the automated node placement and styling are just plain horrid. Next time I will use Excalidraw or draw.io (app.diagrams.net).
+Mermaid diagrams are only good for tiny simple diagrams, but I would no longer use them for anything. See the figure above, the automated node placement and styling are just plain horrid. Next time I will use Excalidraw or draw.io (app.diagrams.net).
+
+## Conclusions
+
+This mini web app runs for about a month continuously (January 2024). It takes one click to redeploy the newest github commit on render.com, but the free plan with cold starts is annoying. It solves the problem though, I can log my visitors. 
+
+It is not clear if MERN is the way. It feels too low level, but so do all the newest frameworks. They all lack a built-in user sign-up and a standard to code things per user. Hunting for the 3rd party authentication solutions to save time [does not solve the problem.](https://blog.hyperknot.com/p/comparing-auth-providers?ref=felixvemmer.com) 
+
+I am looking into [this self-hosted Payload CMS applied with Next.js 14 and Express](https://www.youtube.com/watch?v=06g6YJ6JCJU) now. A lot gets done in a short time, but it is not clear if this is reliable. I do not see much development on the github repository by the author (Josh) and his youtube followers. I will evaluate Payload CMS and Next.js, but most likely will stick to MERN. TBC...
 
 ## References
 
