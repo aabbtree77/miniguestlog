@@ -29,6 +29,9 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 })
 */
 
+console.log('Mongoose version:', mongoose.version);
+console.log('MongoDB driver version:', require('mongoose/node_modules/mongodb/package.json').version);
+
 mongoose.connect(process.env.MONGO_URI, {
   tls: true,
   minTLSVersion: 'TLSv1.2',
