@@ -21,6 +21,24 @@ const PORT = process.env.PORT;
 
 app.set('port', PORT);
 
+//Update 2025.11.18: This is no longer enough as some wrong/old TLS
+//version is defaulted:
+/*
 mongoose.connect(process.env.MONGO_URI).then(() => {
   app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
 })
+*/
+
+mongoose.connect(process.env.MONGO_URI, {
+  tls: true,
+  minTLSVersion: 'TLSv1.2',
+  tlsInsecure: false,
+  tlsAllowInvalidCertificates: false,
+  tlsAllowInvalidHostnames: false
+})
+.then(() => {
+  app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+})
+.catch(err => {
+  console.error("MongoDB connection error:", err);
+});
