@@ -29,6 +29,8 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 })
 */
 
+//Issue No.2 render.com added two new IPs which had to be whitelisted on ATLAS
+
 console.log('Mongoose version:', mongoose.version);
 
 try {
