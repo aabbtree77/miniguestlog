@@ -32,7 +32,6 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 mongoose.connect(process.env.MONGO_URI, {
   tls: true,
   minTLSVersion: 'TLSv1.2',
-  tlsInsecure: false,
   tlsAllowInvalidCertificates: false,
   tlsAllowInvalidHostnames: false
 })
