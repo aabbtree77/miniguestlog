@@ -1,8 +1,10 @@
-const maxmind = require('@maxmind/geoip2-node');
+const fs = require('fs');
+const { Reader } = require('@maxmind/geoip2-node');
 const GuestModel = require("../models/GuestModel");
 
-// Open DB once (sync)
-const db = maxmind.openSync('./geo/GeoLite2-City.mmdb');
+// Read DB once at module load
+const dbBuffer = fs.readFileSync('./geo/GeoLite2-City.mmdb');
+const reader = Reader.openBuffer(dbBuffer);
 
 module.exports = async (req, res) => {
   const guestObj = req.body;
@@ -15,10 +17,10 @@ module.exports = async (req, res) => {
   let countryName = "Unknown";
 
   try {
-    const geo = db.city(guestObj.ip);
+    const geo = reader.city(guestObj.ip);
     if (geo) {
       cityName = geo.city?.names?.en || "Empty City";
-      countryName = geo.country?.iso_code || "Empty Country";
+      countryName = geo.country?.isoCode || "Empty Country";
     }
   } catch (err) {
     console.error("Geo lookup error:", err);
