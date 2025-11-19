@@ -2,3 +2,5 @@
 .env
 .rest
 geo/*.mmdb
+geo/*.tar.gz
+

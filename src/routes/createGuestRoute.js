@@ -1,33 +1,24 @@
-const geoip = require("geoip-lite");
+const maxmind = require("@maxmind/geoip2-node");
+const fs = require("fs");
 
-const GuestModel = require("../models/GuestModel");
+const db = new maxmind.Reader(fs.readFileSync("geo/GeoLite2-City.mmdb"));
 
 module.exports = async (req, res) => {
   const guestObj = req.body;
+  if (!guestObj) return res.json({ Result: "Request body is null, doing nothing." });
 
-  if (guestObj) {
-    geo = geoip.lookup(guestObj.ip);
-    
-    let cityName = "Unknown";
-    let countryName = "Unknown";
-    if (geo) {
-      cityName = geo.hasOwnProperty("city") ? geo.city : "Empty City";
-      countryName = geo.hasOwnProperty("country")
-        ? geo.country
-        : "Empty Country";
-    }
+  const geo = db.get(guestObj.ip) || {};
+  const cityName = geo.city?.names?.en || "Unknown";
+  const countryName = geo.country?.iso_code || "Unknown";
 
-    const guest = new GuestModel({
-      date: guestObj.date,
-      time: guestObj.time,
-      city: cityName,
-      country: countryName,
-    });
+  const guest = new GuestModel({
+    date: guestObj.date,
+    time: guestObj.time,
+    city: cityName,
+    country: countryName,
+  });
 
-    const newGuest = await guest.save();
-
-    res.json(newGuest);
-  } else {
-    res.json({ Result: "Request body is null, doing nothing." });
-  }
+  const newGuest = await guest.save();
+  res.json(newGuest);
 };
+
