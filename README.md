@@ -25,9 +25,9 @@ The problem looks trivial, but the solution uses the following web services:
 
 - mongodb.com Atlas (free plan) to store data.
 
-- MongoDB Compass dekstop app to clean the list occasionally.
+- MongoDB Compass dekstop app to clean DB occasionally.
 
-- ipify.org to get the visitor IP.  
+- ipify.org to get the visitor's IP.  
 
 - maxmind.com GeoLite2 DB to infer the city and country based on the IP.
 
@@ -160,12 +160,12 @@ Make sure to set `.gitignore` not to commit any DB files on github as it imposes
 the limit of 100MB and GeoLite2 may exceed that. Removing a large file from an erroneous commit (exceeding limits) is doable, 
 but also a hassle. Downloading the file automatically as in this code to render.com is perfectly fine.
 
-Make sure to inform chatgpt about the latest changes of [MaxMind API.](https://dev.maxmind.com/) The paths and code API.
+Make sure to inform ChatGPT about the latest changes of the [MaxMind API.](https://dev.maxmind.com/) The paths and code API.
 
 Once the setup works, it is amazing what even the free constantly updated version of the DB does. 
 The code no longer confuses Vilnius with Kaunas, the two Lithuanian cities 100km apart. 
 
-The GeoLite2 DB gets automatically 
+GeoLite2 gets automatically 
 updated/downloaded every time the code is git pushed to render.com, via
 
 ```js
@@ -200,7 +200,7 @@ two errors:
 
 ## Conclusion
 
-One can see why the web is so problematic. Even for a simple problem of maintaining a small list of visitor locations there are so many moving pieces. MaxMind have changed their API once which is visible from chatgpt hallucination, they might do it again. render.com added new IPs which broke MongoDB Atlas. Some regular gymnastics with broken Node driver from MongoDB Atlas due updated TLS version, a very mild problem with invisible caching on render.com already when using Express, imagine what is to come with caching using Next.js...
+One can see why the web is so problematic. Even for a simple problem of maintaining a small list of visitor locations there are so many moving pieces. MaxMind have changed their API once, which is visible from the ChatGPT hallucination, they might do it again. render.com added new IPs which broke MongoDB Atlas. Some regular gymnastics with broken Node drivers, e.g. Mongoose ODM due to updated TLS version, a very mild problem with invisible caching on render.com already when using Express. Imagine what is yet to come with caching in Next.js...
 
 Would I recommend this stack, use it commercially? DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-lNpF0ACe1Y). IMHO, PaaS is only suitable when being VC-funded and into rapid movement/massive delegation, at the cost of not being afraid to take an occasional spectacular DDoS bill. PaaS is also great for testing, demos, and the possibility of free plans. Notice that I am running all this for free, a VPS would demand more work and a monthly bill.
 
@@ -213,11 +213,11 @@ I have greatly benefited from these works:
 [Web Dev Cody: TODO with Authentication.](https://www.youtube.com/watch?v=oJBu2k7OEk8) The React part feels convoluted, and I am not sure about authentication, but my web journey has begun with this code.
 
 [Web Dev Cody: Save Your Time - I deployed Next.js to different services (so you don't have to).](https://youtu.be/ixCEmwH1D8c?t=821)
-render.com is completely fine here. Web Dev Cody has a lot of good videos about whether to deploy on VPS manually, use Docker/Swarm, and K8, go with AWS, or complete 3rd party services such as Vercel. I have not decided yet on my default deployment technology. These tools are changing perpetually and deployment is a complete nightmare. At the moment (November 2025), Hetzner with Dokploy is gaining traction, but something tells me this is not it. I would go manually with raw VPS + ChatGPT, be it Hetzner or something else.
+render.com is completely fine here. Web Dev Cody has a lot of good videos about deployment and SWE. Most of the tools are changing perpetually and this non-convergence and constant exploration become a nightmare. At the moment (November 2025), Hetzner with Dokploy is gaining traction, but something tells me this is not it. I would go manually with raw VPS + ChatGPT, be it Hetzner or something else.
 
 [Web Dev Cody: I got my first DDoS (and what you can do to help prevent it).](https://www.youtube.com/watch?v=-lNpF0ACe1Y) Hint: Go with a raw VPS, at least no huge bills and you control everything when the shit hits the fan. Also, it is the only way to make anything at least mildly reliable and not demanding constant updates.
 
-Net Ninja: [TODO-I](https://www.youtube.com/watch?v=98BzS5Oz5E4&t=2s), [TODO-II.](https://www.youtube.com/watch?v=WsRBmwNkv3Q&t=1s) MERN with manual bare-bones auth. I like it, but it is probably no longer relevant. Most of the frontend jobs (LT, 2025) demand Ts, React, and Next.js which should actually be called Next.ts.
+Net Ninja: [TODO-I](https://www.youtube.com/watch?v=98BzS5Oz5E4&t=2s), [TODO-II.](https://www.youtube.com/watch?v=WsRBmwNkv3Q&t=1s) MERN with manual bare-bones auth. I like it, but it is probably no longer relevant. Most of the frontend jobs (LT, 2025) demand Ts, React, and Next.ts.
 
 [EdRoh: MERN Dashboard.](https://youtu.be/0cPCMIuDk2I?t=24251) Shows the deployment on render.com. Unlike some other tutorials, it does not miss an important step that demands whitelisting render.com IP addresses on mongodb.com.
 
