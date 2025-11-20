@@ -178,7 +178,9 @@ The frontend is set to retrieve only 50 latest items, all at once, so it should 
 Typically, it will be less than 250KB of data to download. The log is visible to everyone as there is no sensitive data.
 
 If .env leaks/is commited by accident, MaxMind's generated key is compromised. In the worst case scenario, someone can start 
-downloading free data from MaxMind building some kind of DDoS on them, resulting in the blocking of the account. This is not a big deal, but better to regenerate the key sometimes, at least this is why all this hassle with keys is created there. Downloading their DB puts some pressure on their servers, they want to have a certain control and monitoring via those keys.
+downloading free data from MaxMind building some kind of DDoS on them, resulting in the blocking of the account. 
+
+I doubt a single lost key can DDoS them, and closing a single free plan-account is not a big deal for me either, but it is good to regenerate the key sometimes, at least this is why all this hassle with keys is created there. Downloading their DB puts some pressure on their servers, they do control/monitoring via those keys.
 
 ## Mermaid
 
@@ -228,6 +230,8 @@ a VPS would demand more work and a monthly bill.
 For anything serious I would go with the VPS though. It is a hassle, but ChatGPT is doing extremely well on common scripting. 
 
 A lot is the question of trust: do you have a PaaS provider which won't bill you insanely, will it still be there in ten years, are they doing too many things/breaking changes, do you know anything about them.
+
+This app lacks authentication, which would most likely come in the form of yet another service. For personal uses, or even when the user number does not exceed 10K, [Clerk](https://clerk.com/pricing) looks like a solid option. Beware that it quickly becomes very expensive beyond that and if one becomes too popular too soon, those two cents per monthly active user can be worse than any DDoS.
 
 ## References
 
