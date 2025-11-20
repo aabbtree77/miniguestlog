@@ -21,9 +21,9 @@ This single-page web app only looks simple, but underneath it uses the following
 
 - mongodb.com Atlas (free plan) to store data.
 
-- ipify.org to get the visitor's IP.  
+- ipify.org to get the visitor IP.  
 
-- maxmind.com to infer the city and country based on the IP.
+- maxmind.com GeoLite2 DB to infer the city and country based on the IP.
 
 Tracking can be accomplished much much easier with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) for free, without coding. However, GA is banned in many European countries such as France, Finland, Sweden...
 
@@ -38,16 +38,16 @@ During the development, I learned from Reddit that Postman API could be in the p
 ## render.com Is Wonderful, the Free Plan NOT So
 
 The app is deployed on render.com, which is amazing in that it allows to `git push origin main` and see the changes instantly 
-deployed as a complete web app without all that endless IT infrastructure quagmire. The GUI is intuitive, and everything works 
+deployed as a complete web app without all that deployment quagmire. The GUI is intuitive, and everything works 
 reliably.
 
-However, the fees are Vercel-alike, and one needs to watch out for the use limits, DDOS.
+However, the fees are Vercel-alike, and one needs to watch out for the use limits, DDoS.
 
 The free plan on render.com is rather horrid:
 
 - It shuts down the nodes after 15 minutes of any request inactivity: [1](https://community.render.com/t/cold-boot-start-of-the-server-for-first-request/15911), [2](https://docs.render.com/docs/free). Later on, the first request will take the whole minute or two to process, the things run smoothly again, until the next inactivity.
 
-- It disables shell, so any quick testing can only be done via app's index.js reuploaded. `"postinstall": "bash scripts/fetchdb.sh"` inside package.json runs fine.
+- It disables shell, so any quick testing can only be done via app's index.js reuploaded. `postinstall` bash script in `package.json` runs fine.
 
 - 1 GB of SSD storage for PostgreSQL databases, which expire after 30 days, which means the database needs to be an external service.
 
@@ -60,7 +60,7 @@ and personal web apps, such as this one.
 
 ## MongoDB Atlas
 
-I have used two ways to access MongoDB Atlas: (i) Chrome, and (ii) MongoDB Compass on Ubuntu 22.04.   
+One can access MongoDB Atlas in two ways: (i) Chrome, and (ii) MongoDB Compass on Ubuntu 22.04.   
 
 The Chrome GUI occasionally is disfunctional with 
 
@@ -127,23 +127,24 @@ It worked for several years reliably. Note the following though:
 
 - [The code](https://www.npmjs.com/package/geoip-lite?activeTab=dependencies) is not actively maintained anymore.
 
-Therefore, the switch was made to use a free version of MaxMind's GeoIP database properly with registration and use of
+Therefore, the switch was made to use MaxMind's free GeoLite2 database, properly with registration and
 
 ```js
 const { Reader } = require('@maxmind/geoip2-node');
 ```
 
-This is some effort to setup. One needs to register at maxmind.com, login there, 
-generate the key, put it inside .env with the latter in .gitignore, set the key also as an environment variable on render.com, 
+This takes some effort to setup. One needs to register at maxmind.com, login there, 
+generate the key, put it inside `.env` with the latter in .gitignore, set the key also as an environment variable on render.com, 
 set up the postinstall script in package.json which downloads and untars a free version of 
 DB into 64MB. Make sure to set `.env` not to commit and upload any of the big DB files on github as it imposes 
-the limit of 100MB and this file may exceed that. Removing a large file from the erroneous commit (exceeding limits) is doable, 
+the limit of 100MB and this file may exceed that. Removing a large file from an erroneous commit (exceeding limits) is doable, 
 but also a hassle. Downloading the file automatically as in this code on render.com is perfectly fine.
 
-Make sure to inform chatgpt about the latest changes of the [MaxMind API.](https://dev.maxmind.com/)
+Make sure to inform chatgpt about the latest changes of [MaxMind API.](https://dev.maxmind.com/)
 
-Once the setup works, it is amazing what even the free version of the DB does. 
-The code no longer confuses Vilnius with Kaunas, the two Lithuanian cities 100km apart.
+Once the setup works, it is amazing what even the free constantly updated version of the DB does. 
+The code no longer confuses Vilnius with Kaunas, the two Lithuanian cities 100km apart. The DB gets automatically 
+updated/downloaded every time the code is redeployed on render.com.
 
 ## Mermaid
 
