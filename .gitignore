@@ -3,4 +3,6 @@
 .rest
 geo/*.mmdb
 geo/*.tar.gz
+*.mmdb
+*.mmdb.gz
 
