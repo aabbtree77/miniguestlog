@@ -2,7 +2,7 @@
 
 <table align="center">
     <tr>
-    <th align="center"> A Simple MERN App to Track Visitors</th>
+    <th align="center"> A Not So Simple MERN App to Track Visitors</th>
     </tr>
     <tr>
     <td>
@@ -13,35 +13,45 @@
 
 ## Introduction
 
-This MERN app monitors [aabbtree77.github.io](https://aabbtree77.github.io/). To see the list of visitors, one must click on the link `Guests` inside the `CV` tab on the landing page. This code is hosted on render.com (with a free plan) and uses a free mongodb.com account to store data. The frontend code is at [https://github.com/aabbtree77/aabbtree77.github.io](https://github.com/aabbtree77/aabbtree77.github.io). 
+This MERN app monitors [aabbtree77.github.io](https://aabbtree77.github.io/). To see the list of visitors, one must click on the link `Guests` inside the `CV` tab on the landing page. The frontend code is at [https://github.com/aabbtree77/aabbtree77.github.io](https://github.com/aabbtree77/aabbtree77.github.io).
 
-Tracking can be accomplished with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) for free, without coding. However, GA is banned in many European countries such as France, Finland, Sweden...
+This single-page web app only looks simple, but underneath it uses the following services:
 
-## Technology Stack
+- render.com (free plan) to host this code.
 
-MERN is ideal here, but it will lack authentication and structure for anything bigger. The client side Js gave me one small headache with an async double fetch which had to be nested. 
+- mongodb.com Atlas (free plan) to store data.
+
+- ipify.org to get the visitor's IP.  
+
+- maxmind.com to infer the city and country based on the IP.
+
+Tracking can be accomplished much much easier with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) for free, without coding. However, GA is banned in many European countries such as France, Finland, Sweden...
+
+## MERN
+
+MERN (Mongo, Express, React, Node) is ideal here, but it will lack authentication and structure for anything bigger. The client side Js gave me one small headache with an async double fetch which had to be nested. No React is applied in this code. 
 
 I did not bother much with Fetch vs Axios, TanStack Query, Js vs Ts, also used ChatGPT whenever needed. Fixing Js and CSS problems with console.log() and Chrome F12 tools is a joy compared to working with OpenGL.
 
 During the development, I learned from Reddit that Postman API could be in the process of **[enshittification](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**, and rushed to use VS Code with an extension called [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client). The latter is simple and snappy.
 
-geoip-lite requires updates or even paid plans. It may confuse Vilnius with Kaunas in Lithuania. Sometimes the returned city is an empty string. This part needs some rethinking.
-
-## render.com Is Wonderful, the Free Plan Is NOT
+## render.com Is Wonderful, the Free Plan NOT So
 
 The app is deployed on render.com, which is amazing in that it allows to `git push origin main` and see the changes instantly 
-deployed as a complete web app without all that endless IT infrastructure quagmire. However, the fees are Vercel-alike, and one 
-needs to watch out for the use limits, DDOS.
+deployed as a complete web app without all that endless IT infrastructure quagmire. The GUI is intuitive, and everything works 
+reliably.
+
+However, the fees are Vercel-alike, and one needs to watch out for the use limits, DDOS.
 
 The free plan on render.com is rather horrid:
 
 - It shuts down the nodes after 15 minutes of any request inactivity: [1](https://community.render.com/t/cold-boot-start-of-the-server-for-first-request/15911), [2](https://docs.render.com/docs/free). Later on, the first request will take the whole minute or two to process, the things run smoothly again, until the next inactivity.
 
-- It disables shell, so any quick testing can only be done via app's index.js reuploaded.
+- It disables shell, so any quick testing can only be done via app's index.js reuploaded. `"postinstall": "bash scripts/fetchdb.sh"` inside package.json runs fine.
 
-- "The free plan on Render does not provide a specific amount of GB for web services, but it includes 1 GB of SSD storage for PostgreSQL databases, which expire after 30 days. Redis cache on the free tier has 25 megabytes (MB) of ephemeral storage. For web services, the amount of disk space depends on the specific deployment, as some documentation mentions a 1 GB persistent disk size as an example."
+- 1 GB of SSD storage for PostgreSQL databases, which expire after 30 days, which means the database needs to be an external service.
 
-- It is not entirely clear how well it handles complex fast moving projects like Bun, Next.js. 
+- It is not entirely clear how well it handles complex fast moving projects like Bun.js, Next.js. 
 
 [Web Dev Cody](https://youtu.be/ixCEmwH1D8c?t=821) prefers Vercel for his Next.js deployments.
 
@@ -99,6 +109,42 @@ The MongoDB's free tier is only 500MB, but it seems to be free forever, not for 
 
 I have limited my MongoDB collection to 10MB and 200 documents (the free MongoDB Atlas plan provides a lot more, 512MB storage). This is a capped collection, the newest document overwrites the oldest one, so an attacker can only flood the server API, but it won't crash the server. The frontend is set to retrieve only 50 latest items, all at once, so it should not hang the browser. Typically, it will be less than 250KB of data to download. The log is visible to everyone as there is no sensitive data.
 
+"postinstall": "bash scripts/fetchdb.sh"
+
+## Geolocation
+
+At first, I have used the NPM package
+
+```js
+const geoip = require("geoip-lite");
+```
+
+It worked for several years reliably. Note the following though:
+
+- geoip-lite uses MaxMind’s free GeoLite2 database without requiring any registrations, keys, it is hassle-free.
+
+- It bundles the free database at publish-time, which eventually sadly gets outdated and needs manual version updates and redeployment.
+
+- [The code](https://www.npmjs.com/package/geoip-lite?activeTab=dependencies) is not actively maintained anymore.
+
+Therefore, the switch was made to use a free version of MaxMind's GeoIP database properly with registration and use of
+
+```js
+const { Reader } = require('@maxmind/geoip2-node');
+```
+
+This is some effort to setup. One needs to register at maxmind.com, login there, 
+generate the key, put it inside .env with the latter in .gitignore, set the key also as an environment variable on render.com, 
+set up the postinstall script in package.json which downloads and untars a free version of 
+DB into 64MB. Make sure to set `.env` not to commit and upload any of the big DB files on github as it imposes 
+the limit of 100MB and this file may exceed that. Removing a large file from the erroneous commit (exceeding limits) is doable, 
+but also a hassle. Downloading the file automatically as in this code on render.com is perfectly fine.
+
+Make sure to inform chatgpt about the latest changes of the [MaxMind API.](https://dev.maxmind.com/)
+
+Once the setup works, it is amazing what even the free version of the DB does. 
+The code no longer confuses Vilnius with Kaunas, the two Lithuanian cities 100km apart.
+
 ## Mermaid
 
 Mermaid diagrams look good for simple diagrams, but I would no longer use them for anything. See the figure above, the automated node placement and styling are horrid. Next time I will use Excalidraw or draw.io (app.diagrams.net).
@@ -122,7 +168,11 @@ two errors:
 
 As one can see, any such a system will be unreliable if left unsupervised.
 
-The good bit here is that Atlas and render.com automate a lot. render.com has an amazing GUI with a clear detailed logging. The error messages are neatly marked in red. One can copy and paste errors into google or chatGPT.
+The good bit here is that Atlas and render.com automate a lot. render.com has an amazing GUI with a clear detailed logging. Copy/paste them into google or chatgpt.
+
+## Conclusion
+
+It is incredible how many moving pieces are involved in such a simple-looking problem as listing visitor locations on a page. render.com and MongoDB Atlas have saved a lot of time, but would I use them commercially? DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-lNpF0ACe1Y). IMHO, this stack is only suitable when being VC-funded by those who are into extremely rapid movement/massive delegation, at the cost of not being afraid to take an occasional spectacular DDoS bill.
 
 ## References
 
@@ -131,7 +181,9 @@ I have greatly benefited from these works:
 [Web Dev Cody: TODO with Authentication.](https://www.youtube.com/watch?v=oJBu2k7OEk8) The React part feels convoluted, and I am not sure about authentication, but my web journey has begun with this code.
 
 [Web Dev Cody: Save Your Time - I deployed Next.js to different services (so you don't have to).](https://youtu.be/ixCEmwH1D8c?t=821)
-render.com is completely fine here. Web Dev Cody has a lot of good videos about whether to deploy on VPS manually, use Docker/Swarm, and K8, go with AWS, or complete 3rd party services such as Vercel. I have not decided yet on my default goto there, plus these tools are changing perpetually and deployment is a complete nightmare. At the moment (November 2025), Hetzner with Dokploy is gaining traction, but something tells me this is yet another tiny drop in the ocean.
+render.com is completely fine here. Web Dev Cody has a lot of good videos about whether to deploy on VPS manually, use Docker/Swarm, and K8, go with AWS, or complete 3rd party services such as Vercel. I have not decided yet on my default deployment technology. These tools are changing perpetually and deployment is a complete nightmare. At the moment (November 2025), Hetzner with Dokploy is gaining traction, but something tells me this is not it. I would go manually with raw VPS, be it Hetzner or something else.
+
+[Web Dev Cody: I got my first DDoS (and what you can do to help prevent it).](https://www.youtube.com/watch?v=-lNpF0ACe1Y) Hint: Go with a raw VPS, at least no huge bills and you control everything when the shit hits the fan.
 
 Net Ninja: [TODO-I](https://www.youtube.com/watch?v=98BzS5Oz5E4&t=2s), [TODO-II.](https://www.youtube.com/watch?v=WsRBmwNkv3Q&t=1s) MERN with manual bare-bones auth. I like it, but it is probably no longer relevant. Most of the frontend jobs (LT, 2025) demand Ts, React, and Next.js which should actually be called Next.ts.
 
