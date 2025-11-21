@@ -1,5 +1,6 @@
 > [“Enshittification, also known as platform decay,[1] is the pattern of decreasing quality of online platforms that act as two-sided markets.”](https://en.wikipedia.org/wiki/Enshittification)<br>
 
+
 <table align="center">
     <tr>
     <th align="center"> What It Takes To Store Visitor Location</th>
@@ -39,11 +40,11 @@ Tracking can be accomplished much much easier with [Google Analytics](https://en
 
 MERN (Mongo, Express, React, Node) is ideal here, but it will lack authentication and structure for anything bigger. The client side introduced a challenge with an async double fetch which had to be nested. No React was applied in this code. 
 
-I did not bother whether to apply Fetch or Axios, TanStack Query, Js vs Ts, also used ChatGPT whenever needed. Fixing Js and CSS problems with console.log() and Chrome F12 tools was a joy compared to working with OpenGL.
+I did not bother whether to apply Fetch or Axios, TanStack Query, Js vs Ts, also used ChatGPT whenever needed.
 
 During the development, I learned from Reddit that Postman API could be in the process of **[enshittification](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**, and rushed to use VS Code with an extension called [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client). The latter is simple and snappy.
 
-## render.com Is Wonderful, the Free Plan Is Not
+## render.com
 
 The app is deployed on render.com. The service allows to `git push origin main` to this repo and see the changes instantly 
 deployed as a complete web app without quagmire. The render.com GUI is intuitive, everything works reliably.
@@ -58,9 +59,7 @@ The free plan on render.com is rather horrid:
 
 - 1 GB of SSD storage for PostgreSQL databases, which expire after 30 days, this is why I also must use MongoDB Atlas.
 
-- It is not entirely clear how well it handles complex fast moving projects like Bun.js, Next.js. 
-
-[Web Dev Cody](https://youtu.be/ixCEmwH1D8c?t=821) prefers Vercel for his Next.js deployments.
+It is not entirely clear how well render handles complex fast moving projects like Bun.js, Next.js. [Web Dev Cody](https://youtu.be/ixCEmwH1D8c?t=821) prefers Vercel for his Next.js deployments.
 
 The free plan is only good for testing external DBs and personal web apps, such as this one.
 
@@ -148,7 +147,7 @@ Make sure to set `.gitignore` not to commit .env and any DB files on github as i
 the limit of 100MB and GeoLite2 may exceed that. Moreover, the DB files may contain the generated key.
 
 Removing a large file from an erroneous commit (exceeding limits) is doable, 
-but also a hassle. Downloading on render.com with scripts is perfectly fine.
+but also a hassle. Downloading large files (100MB) on render.com with scripts is perfectly fine.
 
 Make sure to inform ChatGPT about the latest changes of the [MaxMind API.](https://dev.maxmind.com/) The path to GeoLite2-City and the code API.
 
@@ -161,7 +160,7 @@ updated/downloaded every time the code is git pushed to render.com, via
 "postinstall": "bash scripts/fetchdb.sh"
 ```
 
-It is possible to use MaxMind via http fetch directly, but this saves some network traffic. A premature optimization likely.
+It is possible to use MaxMind via http fetch directly, but I believe this is more reliable, despite the automated download of GeoLite2.
 
 The free GeoLite2 version is sufficiently accurate and also provides the accuracy radius, but I do not use the latter.
 
@@ -181,6 +180,8 @@ If .env leaks/is commited by accident, MaxMind's generated key is compromised. I
 downloading free data from MaxMind building some kind of DDoS on them, resulting in the blocking of the account. 
 
 I doubt a single lost key can DDoS them, and closing a single free plan-account is not a big deal for me either, but it is good to regenerate the key sometimes, at least this is why all this hassle with keys is created there. Downloading their DB puts some pressure on their servers, they do control/monitoring via those keys.
+
+Still unclear what to do with authentication, still no solid answer to DDoS in the commercial setting.
 
 ## Mermaid
 
@@ -206,11 +207,15 @@ two errors:
 
 - render.com has managed to add two new IP addresses along with the old ones, which broke the connectivity to Atlas! The solution was to whitelist those new IPs from render.com on MongoDB Atlas.
 
+- Replaced geoip-lite with maxmind/geoip2-node which now downloads a large file on render.com before running the app, a fragile part to watch out.
+
 ## Conclusion
 
-One can see why the web is so problematic. Maintaining a small list of visitor locations leads to so many moving pieces: 
+One can see why the web is so problematic. Maintaining a small list of visitor locations leads to a lot of moving pieces: 
 
-- MaxMind have changed their API once, which is visible from the ChatGPT hallucination, they might do it again. 
+- MaxMind have changed their API once, which is visible from the ChatGPT hallucination, they might do it again.
+
+- MaxMind updates are not as seamless as using an npm package, a download of the DB file is required. 
 
 - render.com added new IPs which broke MongoDB Atlas. 
 
@@ -220,18 +225,11 @@ One can see why the web is so problematic. Maintaining a small list of visitor l
 
 Would I recommend this stack, use it commercially? 
 
-DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-lNpF0ACe1Y). 
+Sadly no, as I see no definitive simple way to protect myself against the DDoS bills.
 
-PaaS is largely suitable for VC-funded clients who are into rapid movement/massive delegation, at the cost of being ready to take an occasional spectacular DDoS bill. They burn VC's cash, it is not theirs.
+DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-lNpF0ACe1Y).
 
-PaaS is great for testing and demos due to existence of free plans. Notice that I am running all this for free, 
-a VPS would demand more work and a monthly bill.
-
-For anything serious I would go with the VPS though. It is a hassle, but ChatGPT is doing extremely well on common scripting. 
-
-A lot is the question of trust: do you have a PaaS provider which won't bill you insanely, will it still be there in ten years, are they doing too many things/breaking changes, do you know anything about them.
-
-This app lacks authentication, which would most likely come in the form of yet another service. For personal uses, or even when the user number does not exceed 10K, [Clerk](https://clerk.com/pricing) looks like a solid option. Beware that it quickly becomes very expensive beyond that and if one becomes too popular too soon, those two cents per monthly active user can be worse than any DDoS.
+This app lacks authentication which needs yet another service. [Clerk](https://clerk.com/pricing) looks like a solid option. Beware that it quickly becomes very expensive beyond 10K users. If one becomes too popular too soon, those two cents per monthly active user can be worse than any DDoS.
 
 ## References
 
@@ -244,7 +242,7 @@ render.com is completely fine here. Web Dev Cody has a lot of good videos about 
 
 [Web Dev Cody: I got my first DDoS (and what you can do to help prevent it).](https://www.youtube.com/watch?v=-lNpF0ACe1Y)
 
-Net Ninja: [TODO-I](https://www.youtube.com/watch?v=98BzS5Oz5E4&t=2s), [TODO-II.](https://www.youtube.com/watch?v=WsRBmwNkv3Q&t=1s) MERN with manual bare-bones auth. I like it, but it is probably no longer relevant. Most of the frontend jobs (LT, 2025) demand Ts, React, and Next.ts, sadly.
+Net Ninja: [TODO-I](https://www.youtube.com/watch?v=98BzS5Oz5E4&t=2s), [TODO-II.](https://www.youtube.com/watch?v=WsRBmwNkv3Q&t=1s) MERN with manual bare-bones auth. I like it, but it is probably no longer relevant. Most of the frontend jobs (LT, 2025) demand React with Next.ts.
 
 [EdRoh: MERN Dashboard.](https://youtu.be/0cPCMIuDk2I?t=24251) Shows the deployment on render.com. Unlike some other tutorials, it does not miss an important step that demands whitelisting render.com IP addresses on mongodb.com.
 
