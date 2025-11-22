@@ -42,7 +42,7 @@ MERN (Mongo, Express, React, Node) is ideal here, but it will lack authenticatio
 
 I did not bother whether to apply Fetch or Axios, TanStack Query, Js vs Ts, also used ChatGPT whenever needed.
 
-During the development, I learned from Reddit that Postman API could be in the process of **[enshittification](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**, and rushed to use VS Code with an extension called [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client). The latter is simple and snappy.
+During the development, I learned from Reddit that the Postman API could be in the process of **[enshittification](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**, and rushed to use VS Code with an extension called [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client). The latter is simple and snappy.
 
 ## render.com
 
@@ -183,6 +183,33 @@ I doubt a single lost key can DDoS them, and closing a single free plan-account 
 
 Still unclear what to do with authentication, still no solid answer to DDoS in the commercial setting.
 
+## Debugging Js
+
+Hit F12 in Chrome, set the break points in files and proceed checking `fetch`es and whether their `catch` code paths are reached. The files are:
+
+Frontend: [aabbtree77.github.io/miniguestlog
+/sendGuestTimeLoc.js](aabbtree77.github.io/miniguestlog
+/sendGuestTimeLoc.js)
+
+Backend: [https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js](https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js)
+
+[VS Code REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) is useful when writing Js, i.e. testing the HTTP(S) requests in VS Code. 
+
+Typical timings when everything goes well:
+
+```bash
+GET /guests 304 - - 41.458 ms
+GET /guests 304 - - 24.816 ms
+POST /guest 200 115 - 97.330 ms
+POST /guest 200 112 - 26.526 ms
+POST /guest 200 112 - 28.124 ms
+POST /guest 200 112 - 28.546 ms
+POST /guest 200 112 - 28.865 ms
+GET /guests 200 3516 - 23.670 ms
+```
+
+The MongoDB GUI updates may take several minutes.
+
 ## Mermaid
 
 Mermaid diagrams look good for simple diagrams, but I would no longer use them much. See the figure above, the automated node placement is very suboptimal, styling tedious and buggy/nontrivial/non-fun. 
@@ -196,7 +223,7 @@ this is for me to see visitor data, not for the masses, I can wait.
 
 MERN (Express) is simpler than metaframeworks, but they all lack built-in authentication and inexpensive hassle-free hosting. [MongoDB](https://www.mongodb.com/pricing) starts at 8 cents/hour for 10GB, while render.com is at least 20$/month just like Vercel. Going serverless is not viable for an indie developer due to the possibility to mess up payment caps. 
 
-~~I plan to go with [Better Auth](https://www.better-auth.com/) and SQLite, all self-hosted on Hetzner, but it is not clear how to achieve the productivity and ease of managed clouds. [Turso](https://turso.tech/pricing) looks generous enough at the moment. PocketBase is also worth trying to avoid coding everything from scratch, with some chance to keep everything under control.~~
+~~I plan to go with [Better Auth](https://www.better-auth.com/) and SQLite, all self-hosted on Hetzner. [Turso](https://turso.tech/pricing) looks generous enough at the moment. PocketBase?~~
 
 ## Two Years Later: 2025
 
@@ -215,21 +242,29 @@ One can see why the web is so problematic. Maintaining a small list of visitor l
 
 - MaxMind have changed their API once, which is visible from the ChatGPT hallucination, they might do it again.
 
-- MaxMind updates are not as seamless as using an npm package, a download of the DB file is required. 
+- render.com adds new IPs which break MongoDB Atlas. 
 
-- render.com added new IPs which broke MongoDB Atlas. 
+- Broken Mongoose ODM due to updated TLS version. 
 
-- Regular gymnastics with broken Node driver versions, e.g. Mongoose ODM due to updated TLS version. 
-
-- A mild problem with invisible caching on render.com already when using Express. Imagine Next.js there...
+- Manual "clear build cache and deploy" sometimes is needed on render.com.
 
 Would I recommend this stack, use it commercially? 
 
-Sadly no, as I see no definitive simple way to protect myself against the DDoS bills.
+Sadly no, as I see no definitive way to protect myself against the DDoS bills.
 
 DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-lNpF0ACe1Y).
 
-This app lacks authentication which needs yet another service. [Clerk](https://clerk.com/pricing) looks like a solid option. Beware that it quickly becomes very expensive beyond 10K users. If one becomes too popular too soon, those two cents per monthly active user can be worse than any DDoS.
+## To Do?
+
+The code still lacks (left as an exercise to the reader): 
+
+- Authentication, which needs yet another service. [Clerk](https://clerk.com/pricing) looks like a solid option. Beware that it quickly becomes very expensive beyond 10K users. If one is too popular too soon, those two cents per monthly active user can be worse than any DDoS.
+
+- Throttle (request rate limiting).
+
+- Progressive loading (if the list is large).
+
+- Abstraction into a service to be used like Google Analytics.
 
 ## References
 
