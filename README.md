@@ -14,9 +14,9 @@
 
 ## Introduction
 
-This MERN app monitors my homepage [aabbtree77.github.io](https://aabbtree77.github.io/). The visitor time, city, and country are displayed by clicking on the link `Guests` inside the `CV` tab on the landing page. 
+This MERN app monitors my homepage [aabbtree77.github.io](https://aabbtree77.github.io/). The visitor time, city, and country are displayed by clicking on the link `Guests` inside the `CV` tab there. 
 
-The problem looks trivial, but the simplest solution I have come up with uses:
+The simplest solution I have come up with uses:
 
 - Github Pages to host frontend at [aabbtree77/aabbtree77.github.io](https://github.com/aabbtree77/aabbtree77.github.io).
 
@@ -28,30 +28,42 @@ The problem looks trivial, but the simplest solution I have come up with uses:
 
 - MongoDB Compass dekstop app to clean DB occasionally.
 
-- ipify.org to get the visitor's IP.  
+- ipify.org to get visitor's IP.  
 
 - maxmind.com GeoLite2 free DB to infer the city and country based on the IP.
 
 - BearVPN (free plan) to test different geolocations.
 
-Tracking can be accomplished much much easier with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) for free, without coding. However, GA is bloated and banned in many European countries such as France, Finland, Sweden...
+Tracking can be accomplished much much easier with [Google Analytics](https://en.wikipedia.org/wiki/Google_Analytics) (GA) for free, without coding. However, GA is not dev-friendly and is banned in many European countries such as France, Finland, Sweden...
 
 ## MERN
 
-MERN (Mongo, Express, React, Node) is ideal here, but it will lack authentication and structure for anything bigger. The client side introduced a challenge with an async double fetch which had to be nested. No React was applied in this code. 
+MERN (MongoDB, Express, React, Node) is the best choice for no-nonsense apps, with the following to note:
 
-I did not bother whether to apply Fetch or Axios, TanStack Query, Js vs Ts, also used ChatGPT whenever needed.
+- Js has one huge advantage over Ts: One can directly inspect the Js source code on the browser. 
+Something breaks after a year or two, a quick fix is often possible without redoing the whole setup with local testing.
 
-During the development, I learned from Reddit that the Postman API could be in the process of **[enshittification](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**, and rushed to use VS Code with an extension called [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client). The latter is simple and snappy.
+- Use ES5 with a bit of ES6 such as map and import (if the client side is big enough, not to load everything into a single space, totally no need here).
+
+- What matters is Express (simplicity, massive use), and Node (massive use). No Bun, no Next.js, these would complicate deployment.
+
+- mongodb.com is great due to the Atlas service and a free plan, but everything around is SQL, see [DB ranking](https://db-engines.com/en/ranking).
+
+- Authentication is a mess, nobody has good answers. Thankfully I did not need it here.
+
+- Watch out for a nested async double fetch on the client side.
+
+I did not bother whether to apply Fetch or Axios, TanStack Query, used ChatGPT whenever needed, coded in VS Code with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) rather than Postman API which could be in the process of **[enshittification.](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**
 
 ## render.com
 
 The app is deployed on render.com. The service allows to `git push origin main` to this repo and see the changes instantly 
-deployed as a complete web app without quagmire. The render.com GUI is intuitive, everything works reliably.
+deployed as a complete web app without quagmire. The render.com GUI is intuitive, everything works reliably. Sometimes one must
+clear cache manually in the GUI as it picks up an older version of this repo.
 
-However, the fees are Vercel-alike, and one needs to watch out for the use limits, DDoS!
+The fees are Vercel-like, and one needs to watch out for the use limits, DDoS!
 
-The free plan on render.com is rather horrid:
+The free plan on render.com is somewhat horrid:
 
 - It shuts down the nodes after 15 minutes of any request inactivity: [1](https://community.render.com/t/cold-boot-start-of-the-server-for-first-request/15911), [2](https://docs.render.com/docs/free). Later on, the first request will take the whole minute or two to process, the things run smoothly again, until the next inactivity.
 
@@ -59,7 +71,7 @@ The free plan on render.com is rather horrid:
 
 - 1 GB of SSD storage for PostgreSQL databases, which expire after 30 days, this is why I also must use MongoDB Atlas.
 
-It is not entirely clear how well render handles complex fast moving projects like Bun.js, Next.js. [Web Dev Cody](https://youtu.be/ixCEmwH1D8c?t=821) prefers Vercel for his Next.js deployments.
+It is not entirely clear how well render.com handles complex fast moving projects like Bun.js, Next.js. [Web Dev Cody](https://youtu.be/ixCEmwH1D8c?t=821) prefers Vercel for his Next.js deployments.
 
 The free plan is only good for testing external DBs and personal web apps, such as this one.
 
@@ -192,7 +204,7 @@ Frontend: [aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js](aabbtree77.git
 
 Backend: [https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js](https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js)
 
-[VS Code REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) is useful when writing Js, i.e. testing the HTTP(S) requests in VS Code. 
+[VS Code REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) is useful when testing the HTTP(S) requests in VS Code. 
 
 Typical timings when everything goes well:
 
@@ -207,7 +219,7 @@ POST /guest 200 112 - 28.865 ms
 GET /guests 200 3516 - 23.670 ms
 ```
 
-The MongoDB GUI updates may take several minutes.
+MongoDB GUI may take several minutes to update its data.
 
 ## Mermaid
 
@@ -243,13 +255,13 @@ One can see why the web is so problematic. Maintaining a small list of visitor l
 
 - render.com adds new IPs which break MongoDB Atlas. 
 
-- Broken Mongoose ODM due to updated TLS version. 
+- Broken Mongoose ODM due to updated TLS version (1.2). 
 
 - Manual "clear build cache and deploy" sometimes is needed on render.com.
 
 Would I recommend this stack, use it commercially? 
 
-Sadly no, as I see no definitive way to protect myself against the DDoS bills.
+Sadly no, as I see no way to protect myself against the DDoS bills.
 
 DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-lNpF0ACe1Y).
 
@@ -257,26 +269,24 @@ DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-l
 
 The code still lacks (left as an exercise to the reader): 
 
-- Authentication, which needs yet another service. [Clerk](https://clerk.com/pricing) looks like a solid option. Beware that it quickly becomes very expensive beyond 10K users. If one is too popular too soon, those two cents per monthly active user can be worse than any DDoS.
+- Authentication, which needs yet another service. [Clerk](https://clerk.com/pricing) is very expensive beyond 10K users. If one is too popular too soon, those two cents per monthly active user can be worse than any DDoS.
 
-- Throttle (request rate limiting).
+- Abstraction/clean up into a service or library.
 
-- Progressive loading (if the list is large).
-
-- Abstraction into a service to be used like Google Analytics.
+- Throttle (request rate limiting), progressive loading (if the list is large)...
 
 ## References
 
 I have greatly benefited from these works:
 
-[Web Dev Cody: TODO with Authentication.](https://www.youtube.com/watch?v=oJBu2k7OEk8) The React part feels convoluted, and I am not sure about authentication, but my web journey has begun with this code.
+[Web Dev Cody: TODO with Authentication.](https://www.youtube.com/watch?v=oJBu2k7OEk8) The React part feels convoluted, authentication not sufficiently developed/tested.
 
-[Web Dev Cody: Save Your Time - I deployed Next.js to different services (so you don't have to).](https://youtu.be/ixCEmwH1D8c?t=821)
-render.com is completely fine here. Web Dev Cody has a lot of good videos about deployment and SWE. Most of the tools are changing perpetually and this non-convergence and constant exploration become a nightmare. At the moment (November 2025), Hetzner with Dokploy is gaining traction, but something tells me this is not it. I would now go manually with raw VPS + ChatGPT, be it Hetzner or something else.
+[Web Dev Cody: Save Your Time - I deployed Next.js to different services (so you don't have to).](https://youtu.be/ixCEmwH1D8c?t=821) 
+Web Dev Cody has some good videos about deployment and SWE. Most of the tools are changing perpetually, classical raw VPS is probably the only way.
 
 [Web Dev Cody: I got my first DDoS (and what you can do to help prevent it).](https://www.youtube.com/watch?v=-lNpF0ACe1Y)
 
-Net Ninja: [TODO-I](https://www.youtube.com/watch?v=98BzS5Oz5E4&t=2s), [TODO-II.](https://www.youtube.com/watch?v=WsRBmwNkv3Q&t=1s) MERN with manual bare-bones auth. I like it, but it is probably no longer relevant. Most of the frontend jobs (LT, 2025) demand React with Next.ts.
+Net Ninja: [TODO-I](https://www.youtube.com/watch?v=98BzS5Oz5E4&t=2s), [TODO-II.](https://www.youtube.com/watch?v=WsRBmwNkv3Q&t=1s) MERN with manual bare-bones auth. I like it, but most of the jobs now demand Next.ts and other crapola.
 
 [EdRoh: MERN Dashboard.](https://youtu.be/0cPCMIuDk2I?t=24251) Shows the deployment on render.com. Unlike some other tutorials, it does not miss an important step that demands whitelisting render.com IP addresses on mongodb.com.
 
