@@ -187,8 +187,7 @@ Still unclear what to do with authentication, still no solid answer to DDoS in t
 
 Hit F12 in Chrome, set the break points in files and proceed checking `fetch`es and whether their `catch` code paths are reached. The files are:
 
-Frontend: [aabbtree77.github.io/miniguestlog
-/sendGuestTimeLoc.js](aabbtree77.github.io/miniguestlog
+Frontend: [aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js](aabbtree77.github.io/miniguestlog
 /sendGuestTimeLoc.js)
 
 Backend: [https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js](https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js)
