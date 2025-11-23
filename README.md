@@ -38,14 +38,12 @@ Tracking can be accomplished much much easier with [Google Analytics](https://en
 
 ## MERN
 
-MERN (MongoDB, Express, React, Node) is the best choice for no-nonsense apps, with the following to note:
+MERN (MongoDB, Express, React, Node) is the best choice for minimal apps, with the following to note:
 
-- Js has one huge advantage over Ts: One can directly inspect the Js source code on the browser. 
-Something breaks after a year or two, a quick fix is often possible without redoing the whole setup with local testing.
+- Js has one huge advantage over Ts: One can directly inspect Js on the browser. 
+Something breaks after a year or two, a quick fix is often possible without redoing the whole VS Code setup.
 
-- Use ES5 with a bit of ES6 such as map and import (if the client side is big enough, not to load everything into a single space, totally no need here).
-
-- What matters is Express (simplicity, massive use), and Node (massive use). No Bun, no Next.js, these would complicate deployment.
+- There are three different module systems (require vs import vs script), and three different ways to do async (ES5, ES6, ES8).
 
 - mongodb.com is great due to the Atlas service and a free plan, but everything around is SQL, see [DB ranking](https://db-engines.com/en/ranking).
 
@@ -53,7 +51,7 @@ Something breaks after a year or two, a quick fix is often possible without redo
 
 - Watch out for a nested async double fetch on the client side.
 
-I did not bother whether to apply Fetch or Axios, TanStack Query, used ChatGPT whenever needed, coded in VS Code with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) rather than Postman API which could be in the process of **[enshittification.](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**
+I did not bother whether to apply Fetch or Axios, ES6 or ES8 (they are mixed badly), TanStack Query, used ChatGPT whenever needed, coded in VS Code with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) rather than Postman API which could be in the process of **[enshittification.](https://www.reddit.com/r/webdev/comments/16tq1eh/now_that_postman_sucks_is_there_a_good_alternative/)**
 
 ## render.com
 
