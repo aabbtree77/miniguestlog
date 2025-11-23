@@ -197,14 +197,15 @@ Still unclear what to do with authentication, still no solid answer to DDoS in t
 
 ## Debugging Js
 
-Hit F12 in Chrome, set the break points in files and proceed checking `fetch`es and whether their `catch` code paths are reached. The files are:
+Hit F12 in Chrome, set the break points in files and proceed checking the `fetch` and `catch` code paths. 
 
-Frontend: [aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js](aabbtree77.github.io/miniguestlog
-/sendGuestTimeLoc.js)
+The files are:
+
+Frontend: [aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js](aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js)
 
 Backend: [https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js](https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js)
 
-[VS Code REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) is useful when testing the HTTP(S) requests in VS Code. 
+[VS Code REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) helps testing the HTTP(S) requests.
 
 Typical timings when everything goes well:
 
@@ -219,7 +220,7 @@ POST /guest 200 112 - 28.865 ms
 GET /guests 200 3516 - 23.670 ms
 ```
 
-MongoDB GUI may take several minutes to update its data.
+MongoDB GUI may take several minutes to update its data, the cold start of the free plan on render.com - up to 3 minutes. 
 
 ## Mermaid
 
@@ -243,13 +244,13 @@ two errors:
 
 - Newer TLS version is now required by MongoDB Atlas, but it is not supported by the Mongoose ORM deployed on render.com a year or two ago. Here I had to play with the Mongoose connection options in index.js, and nothing worked there. The solution turned out to be not to specify anything TLS related. Remove package-lock.json, rm -rf node_modules, npm install, git push origin main, `clean cache and redeploy manually` on render.com (one button click).
 
-- render.com has managed to add two new IP addresses along with the old ones, which broke the connectivity to Atlas! The solution was to whitelist those new IPs from render.com on MongoDB Atlas.
+- render.com has managed to add two new IP addresses along with the old ones, which broke the connectivity to Atlas! The solution was to whitelist those new IPs of render.com on MongoDB Atlas.
 
 - Replaced geoip-lite with maxmind/geoip2-node which now downloads a large file on render.com before running the app, a fragile part to watch out.
 
 ## Conclusion
 
-One can see why the web is so problematic. Maintaining a small list of visitor locations leads to a lot of moving pieces: 
+One can see why the web is so error-prone:
 
 - MaxMind have changed their API once, which is visible from the ChatGPT hallucination, they might do it again.
 
@@ -267,7 +268,7 @@ DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-l
 
 ## To Do?
 
-The code still lacks (left as an exercise to the reader): 
+The code still lacks ("left as an exercise to the reader"): 
 
 - Authentication, which needs yet another service. [Clerk](https://clerk.com/pricing) is very expensive beyond 10K users. If one is too popular too soon, those two cents per monthly active user can be worse than any DDoS.
 
