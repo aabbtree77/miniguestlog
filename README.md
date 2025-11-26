@@ -1,4 +1,8 @@
-> [“Enshittification, also known as platform decay,[1] is the pattern of decreasing quality of online platforms that act as two-sided markets.”](https://en.wikipedia.org/wiki/Enshittification)<br>
+> "And these are the days
+> When our work has come asunder"
+> 
+> \- U2 Lemon, 1993
+<br>
 
 
 <table align="center">
@@ -14,9 +18,9 @@
 
 ## Introduction
 
-This MERN app monitors my homepage [aabbtree77.github.io](https://aabbtree77.github.io/). The visitor time, city, and country are displayed by clicking on the link `Guests` inside the `CV` tab there. 
+This MERN app monitors my homepage [aabbtree77.github.io](https://aabbtree77.github.io/). Visitors' time, city, and country are displayed by clicking on the link `Guests` inside the `CV` tab there. 
 
-The simplest solution I have come up with uses:
+The simplest solution I have come up with:
 
 - Github Pages to host frontend at [aabbtree77/aabbtree77.github.io](https://github.com/aabbtree77/aabbtree77.github.io).
 
@@ -40,12 +44,12 @@ Tracking can be accomplished much much easier with [Google Analytics](https://en
 
 MERN (MongoDB, Express, React, Node) is the best choice for minimal apps, with the following to note:
 
-- Js has one huge advantage over Ts: One can directly inspect Js on the browser. 
+- Js has one advantage over Ts: One can directly inspect Js on the browser. 
 Something breaks after a year or two, a quick fix is often possible without redoing the whole VS Code setup.
 
 - There are three different module systems (require vs import vs script), and three different ways to do async (ES5, ES6, ES8).
 
-- mongodb.com is great due to the Atlas service and a free plan, but everything around is SQL, see [DB ranking](https://db-engines.com/en/ranking).
+- mongodb.com is great due to the Atlas service (with a free plan), but everything around is SQL, see [DB ranking](https://db-engines.com/en/ranking).
 
 - Authentication is a mess, nobody has good answers. Thankfully I did not need it here.
 
@@ -237,26 +241,32 @@ MERN (Express) is simpler than metaframeworks, but they all lack built-in authen
 
 ## Two Years Later: 2025
 
-November 18, 2025, the app got broken. Chrome shows that a fetch from render.com does not work, the log on render.com indicates 
-two errors: 
+November 18, 2025, the app broke due to 3rd party updates. Chrome shows that a fetch from render.com does not work, the log on render.com indicates two errors: 
 
-- Newer TLS version is now required by MongoDB Atlas, but it is not supported by the Mongoose ORM deployed on render.com a year or two ago. Here I had to play with the Mongoose connection options in index.js, and nothing worked there. The solution turned out to be not to specify anything TLS related. Remove package-lock.json, rm -rf node_modules, npm install, git push origin main, `clean cache and redeploy manually` on render.com (one button click).
+- Newer TLS version is now required by MongoDB Atlas, but it is not supported by the Mongoose ORM deployed on render.com a year or two ago. Here I had to play with the Mongoose connection options in index.js, and nothing worked there. **Solution:** 
+  - do not specify anything TLS related.
+  - remove package-lock.json, 
+  - rm -rf node_modules, 
+  - npm install, 
+  - git push origin main, 
+  - `clean cache and redeploy manually` on render.com (one button click).
 
-- render.com has managed to add two new IP addresses along with the old ones, which broke the connectivity to Atlas! The solution was to whitelist those new IPs of render.com on MongoDB Atlas.
+- render.com has managed to add two new IP addresses along with the old ones, which broke the connectivity to Atlas! **Solution:**   
+  - whitelist those new IPs of render.com on MongoDB Atlas.
 
 - Replaced geoip-lite with maxmind/geoip2-node which now downloads a large file on render.com before running the app, a fragile part to watch out.
 
 ## Conclusion
 
-One can see why the web is so error-prone:
+The web is very error-prone and it is probably a very good idea to minimize the HTTP fetches:
 
-- MaxMind have changed their API once, which is visible from the ChatGPT hallucination, they might do it again.
+- Paths: MaxMind have changed their API once, which is visible from the ChatGPT hallucination, they might do it again.
 
-- render.com adds new IPs which break MongoDB Atlas. 
+- IPs: render.com adds new IPs which break MongoDB Atlas. 
 
-- Broken Mongoose ODM due to updated TLS version (1.2). 
+- Node packages: broken Mongoose ODM due to updated TLS version (1.2). 
 
-- Manual "clear build cache and deploy" sometimes is needed on render.com.
+- Caching: manual "clear build cache and deploy" sometimes is needed on render.com.
 
 Would I recommend this stack, use it commercially? 
 
@@ -268,11 +278,13 @@ DDoS is scary, see the case of [Web Dev Cody](https://www.youtube.com/watch?v=-l
 
 The code still lacks ("left as an exercise to the reader"): 
 
-- Authentication, which needs yet another service. [Clerk](https://clerk.com/pricing) is very expensive beyond 10K users. If one is too popular too soon, those two cents per monthly active user can be worse than any DDoS.
+- Authentication. [Clerk](https://clerk.com/pricing) is dangerous. If one becomes too popular too soon, those two cents per monthly active user can be worse than any DDoS. Pay per user is also totally unsuitable for a wide range of apps such as exam testing/proctoring. 
 
 - Abstraction/clean up into a service or library.
 
 - Throttle (request rate limiting), progressive loading (if the list is large)...
+
+No need for any of these as one can find some pretty "clones" of Google Analytics on [Clone-Wars](https://github.com/GorvGoyl/Clone-Wars). [Ackee](https://github.com/electerious/Ackee?tab=readme-ov-file) is even MIT-licensed.
 
 ## References
 
