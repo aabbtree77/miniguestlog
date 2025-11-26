@@ -1,5 +1,4 @@
-> "And these are the days
-> When our work has come asunder"
+> "And these are the days <br>When our work has come asunder"
 > 
 > \- U2 Lemon, 1993
 <br>
@@ -243,8 +242,8 @@ MERN (Express) is simpler than metaframeworks, but they all lack built-in authen
 
 November 18, 2025, the app broke due to 3rd party updates. Chrome shows that a fetch from render.com does not work, the log on render.com indicates two errors: 
 
-- Newer TLS version is now required by MongoDB Atlas, but it is not supported by the Mongoose ORM deployed on render.com a year or two ago. Here I had to play with the Mongoose connection options in index.js, and nothing worked there. **Solution:** 
-  - do not specify anything TLS related.
+- Newer TLS version is now required by MongoDB Atlas, but it is not supported by the Mongoose ORM deployed on render.com a year or two ago. Mongoose connection options (inside index.js) would add a complete fog. **Solution:** 
+  - do not specify anything TLS related,
   - remove package-lock.json, 
   - rm -rf node_modules, 
   - npm install, 
