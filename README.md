@@ -283,7 +283,9 @@ The code still lacks ("left as an exercise to the reader"):
 
 - Throttle (request rate limiting), progressive loading (if the list is large)...
 
-No need for any of these as one can find some pretty "clones" of Google Analytics on [Clone-Wars](https://github.com/GorvGoyl/Clone-Wars). [Ackee](https://github.com/electerious/Ackee?tab=readme-ov-file) is even MIT-licensed.
+~~No need for any of these as one can find some pretty "clones" of Google Analytics on [Clone-Wars](https://github.com/GorvGoyl/Clone-Wars). [Ackee](https://github.com/electerious/Ackee?tab=readme-ov-file) is even MIT-licensed.~~
+
+Authentication is the No.1 problem that needs solving. It is nearly impossible to find a FOSS lib/framework which would be reliable, simple to use, well documented, with readable code, and not cluttered with features. Going with a username and password demands bringing in the email system and password reset flows, but one needs to bite the bullet and implement the whole thing manually. Emails are likely a necessity for any web app/service anyway. Coding directly will be better (esp. with the ChatGPT leverage) than doing research on various libs out there.
 
 ## References
 
