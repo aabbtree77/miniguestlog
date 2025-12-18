@@ -3,17 +3,58 @@
 > \- U2 Lemon, 1993
 <br>
 
+<p align="center">
+  <b>What it takes to store visitor location</b>
+</p>
 
-<table align="center">
-    <tr>
-    <th align="center"> What It Takes To Store Visitor Location</th>
-    </tr>
-    <tr>
-    <td>
-    <img src="./mermaid/mermaid-diagram-2023-12-18-190827.png"  alt="Guestlog implementation." width="100%" >
-    </td>
-    </tr>
-</table>
+```mermaid
+flowchart TD
+    %% ===== Sources (top band) =====
+    U[You]
+    T[Me]
+    V[TunnelBear VPN]
+    I[INF: ipify.org]
+
+    T --> V
+
+    %% ===== Frontend =====
+    FE_A[FE: index.html]
+    FE_K[FE: sendGuestTimeLoc.js]
+    FE_D[FE: loadGuestsSpinner.html]
+
+    %% ===== Backend =====
+    BE_H[BE: createGuestroute.js]
+    BE_J[BE: readGuestsroute.js]
+
+    %% ===== Infra =====
+    INF_R[INF: render.com]
+    INF_C[(INF: mongodb.com)]
+
+    %% ===== Source → Frontend =====
+    U --> |Visit| FE_A
+    V --> |Visit| FE_A
+    I --> |get IP| FE_K
+
+    %% ===== Frontend flow =====
+    FE_A --> |DOMContentLoaded| FE_K
+    FE_A --> |Click “Guests”| FE_D
+    FE_K --> |send visit time + IP| BE_H
+
+    %% ===== Backend / Infra flow =====
+    BE_H --> |store visit| INF_C
+    INF_C --> |fetch visits| BE_J
+    BE_J --> |return JSON| FE_D
+
+    BE_H <--> INF_R
+    INF_R --> |whitelist IPs| INF_C
+
+    %% ===== Legend footer =====
+    L_FE["FE = Frontend<br/>github.com/aabbtree77/aabbtree77.github.io"]
+    L_BE["BE = Backend<br/>github.com/aabbtree77/miniguestlog"]
+    L_INF["INF = Infrastructure / external services"]
+
+    L_FE --- L_BE --- L_INF
+```
 
 ## Introduction
 
@@ -225,9 +266,11 @@ MongoDB GUI may take several minutes to update its data, the cold start of the f
 
 ## Mermaid
 
-Mermaid diagrams look good for simple diagrams, but I would no longer use them much. See the figure above, the automated node placement is very suboptimal, styling tedious and buggy/nontrivial/non-fun. 
+Mermaid diagrams look good only for simple diagrams. Automated node placement is very suboptimal, styling tedious, buggy, and not fun.
 
-Next time I will use Excalidraw or draw.io (app.diagrams.net). On the other hand, ChatGPT might be able to style and optimize Mermaid diagrams, maybe even generate them.
+The figure you see above is about 3-4 iterations of AI, while the folder ./mermaid includes figures styled manually by me. Neither looks good. 
+
+Excalidraw or draw.io (app.diagrams.net) are the answers for solid figures, but the combo of Mermaid + AI + github's automatic mermaid handling inside .md is quite a time saver.
 
 ## A Year Later: 2004
 
