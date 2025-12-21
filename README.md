@@ -220,6 +220,18 @@ The free GeoLite2 version is sufficiently accurate and also provides the accurac
 
 The commercial version adds more accuracy and location granularity (district and postal code). It can also detect a VPN/Tor/Hosting Provider/Data Center. This is seriously applied in fraud prevention, regional content tailoring, blocking access from sanctioned countries, Tax/VAT calculation by customer location, alcohol/tobacco ads regulation, banking/compliance.
 
+## [www.ipify.org](https://www.ipify.org/)
+
+ipify has been doing its job reliably, but it is unnecessary for this application. To get a visitor's IP, all one needs is a node where HTTP(S) connection terminates, to extract the request headers. Doing this on backend would avoid ipify's uptime and rate limiting. A backend has full context of connection metadata including forwarding headers which can determine client's provenance behind proxies, CDNs, VPNs. ipify only gives an IP address string.
+
+The ipify API would be essential if we wanted to eliminate the backend entirely (still keeping MongoDB Atlas). This is indeed possible!
+
+Doing apps with a backend like here is a proper way, but in this particular problem it only saves some extra fetches to MaxMind. Their DB is first downloaded by the backend at the app startup time, and the app does the geo-ip lookup locally on the backend.
+
+Note: Instead of MongoDB Atlas one could use Redis key-value store hosted on Upstash. A free plan allows 256MB with 500K monthly commands. This is less generous than Atlas (512MB), but on par.
+
+Instead of render.com (a full PaaS), one can employ (serverless) network hooks, e.g. Cloudflare Worker, Vercel Edge Function, Netlify Function. These are short (30s.) Js/Ts function execution environments which can still detect IP, read from and write to Upstash. The problem is that one pays for the number of function invocations (requests) and the compute time (duration) measured in milliseconds, multiplied by the allocated memory (GB-seconds). Wrapping MaxMind DB into a serverless function would require reuploading the whole DB every time the function activates, which is clearly too much. So the hooks are very limited, one would still need yet another storage for MaxMind DB (or use their REST API, whose free version might be limited to say 1K requests per day).
+
 ## **Security**
 
 I have limited my MongoDB collection to 10MB and 200 documents (the free MongoDB Atlas plan provides a lot more, 512MB storage).
