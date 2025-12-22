@@ -249,15 +249,25 @@ downloading free data from MaxMind building some kind of DDoS on them, resulting
 
 I doubt a single lost key can DDoS them, and closing a single free plan-account is not a big deal for me either, but it is good to regenerate the key sometimes, at least this is why all this hassle with keys is created there. Downloading their DB puts some pressure on their servers, they do control/monitoring via those keys.
 
-Still unclear what to do with authentication, still no solid answer to DDoS in the commercial setting.
+**Still unclear what to do with authentication, still no solid answer to DDoS in the commercial setting.**
 
 ## Debugging Js
 
-Hit F12 in Chrome, set the break points in files and proceed checking the `fetch` and `catch` code paths.
+~~Hit F12 in Chrome, set the break points in files and proceed checking the `fetch` and `catch` code paths.~~
 
 The files are:
 
-Frontend: [aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js](aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js)
+~~Frontend: [aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js](aabbtree77.github.io/miniguestlog/sendGuestTimeLoc.js)~~
+
+December 2025 Update: FE is now React. No direct debugging of Js anymore, but React is worth it:
+
+- Old Js is not just HTML/CSS/Js, but also the DOM API with document.createElement, appendChild etc. which really beg for a DSL. See [the comment by alexbarrett on reddit](https://www.reddit.com/r/webdev/comments/9pjii1/my_feelings_about_jsx/) which provides one simple example in plain HTML and JSX. [The comment by MeTaL_oRgY](https://www.reddit.com/r/reactjs/comments/16bfob0/for_those_that_have_tried_svelte_do_you_still/) compiles a list of problems which JSX solves as a templating system.
+
+- Minimal React brings more structure. TSX to lay out components, useState to update them, useEffect to load/reload them and to keep the HTTP fetches.
+
+- A project generator (vite) and libs such as shadcn, lucide icons, motion are almost like a standard library now, bringing more code uniformization and convergence.
+
+A serious downside is that things get hairy with React Router and Next.js where it becomes confusing what runs on BE and FE. Use minimal React as much as possible, which is roughly TSX + useState + useEffect, KISS.
 
 Backend: [https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js](https://github.com/aabbtree77/miniguestlog/blob/main/src/routes/createGuestRoute.js)
 
