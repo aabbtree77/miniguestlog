@@ -220,6 +220,8 @@ The free GeoLite2 version is sufficiently accurate and also provides the accurac
 
 The commercial version adds more accuracy and location granularity (district and postal code). It can also detect a VPN/Tor/Hosting Provider/Data Center. This is seriously applied in fraud prevention, regional content tailoring, blocking access from sanctioned countries, Tax/VAT calculation by customer location, alcohol/tobacco ads regulation, banking/compliance.
 
+Alternatives to MaxMind do exist. [Python Algorithms](https://github.com/TheAlgorithms/Python/blob/master/web_programming/get_ip_geolocation.py) feature the use of [ipinfo.io](https://ipinfo.io/pricing), but its free plan excludes cities in geo-location information.
+
 ## [www.ipify.org](https://www.ipify.org/)
 
 ipify has been doing its job reliably, but it is unnecessary for this application. To get a visitor's IP, all one needs is a node where HTTP(S) connection terminates, to extract the request headers. Doing this on backend would avoid ipify's uptime and rate limiting. A backend has full context of connection metadata including forwarding headers which can determine client's provenance behind proxies, CDNs, VPNs. ipify only gives an IP address string.
