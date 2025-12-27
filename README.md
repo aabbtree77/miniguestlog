@@ -290,11 +290,11 @@ MongoDB GUI may take several minutes to update its data, the cold start of the f
 
 ## Mermaid
 
-Mermaid diagrams look good only for simple diagrams. Automated node placement is very suboptimal, styling tedious, buggy, and not fun.
+Mermaid diagrams look good only for simple diagrams. Automated node placement is very suboptimal, styling tedious, buggy, not fun.
 
 The figure you see above is about 3-4 iterations of AI, while the folder ./mermaid includes figures styled manually by me. Neither looks good.
 
-Excalidraw or draw.io (app.diagrams.net) are the answers for solid figures, but the combo of Mermaid + AI + github's automatic mermaid handling inside .md saves so much time.
+Excalidraw or draw.io (app.diagrams.net) are the answers for solid figures, but the combo of Mermaid + AI + github's automatic mermaid handling inside .md saves so much time. One caveat: github markdown does not render Mermaid on mobile.
 
 ## A Year Later: 2004
 
